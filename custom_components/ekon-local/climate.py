@@ -24,9 +24,14 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.components.climate import (ClimateEntity, PLATFORM_SCHEMA)
 
 from homeassistant.components.climate.const import (
-    HVAC_MODE_OFF, HVAC_MODE_AUTO, HVAC_MODE_COOL, HVAC_MODE_DRY,
-    HVAC_MODE_FAN_ONLY, HVAC_MODE_HEAT, SUPPORT_FAN_MODE,
-    SUPPORT_TARGET_TEMPERATURE, FAN_AUTO, FAN_LOW, FAN_MEDIUM, FAN_HIGH)
+    HVAC_MODE_OFF,
+    HVAC_MODE_AUTO,
+    HVAC_MODE_COOL,
+    HVAC_MODE_DRY,
+    HVAC_MODE_FAN_ONLY,
+    HVAC_MODE_HEAT,
+)
+from homeassistant.components.climate import ClimateEntity, ClimateEntityFeatures
 
 from homeassistant.const import (
     ATTR_UNIT_OF_MEASUREMENT, ATTR_TEMPERATURE, 
@@ -218,7 +223,7 @@ class HAEkonLocalClimateController():
 
 
 class EkonLocalClimate(ClimateEntity):
-    def __init__(self, controller, hass , state, name, deviceSession):
+    def __init__(self, coordinator, config_entry):
         self.hass = hass
         _LOGGER.info('Initialize the Ekon climate device')
         self._controller = controller
@@ -227,6 +232,9 @@ class EkonLocalClimate(ClimateEntity):
         self._session = deviceSession
         self.timed_out = False
         self._added_to_hass = False
+        self._support_flags = 0
+        self._support_flags |= ClimateEntityFeatures.SUPPORT_TURN_OFF
+        self._support_flags |= ClimateEntityFeatures.SUPPORT_TURN_ON
 
     BLHA = 0
     async def update_state(self, newstate):
@@ -238,6 +246,16 @@ class EkonLocalClimate(ClimateEntity):
 
         if self._added_to_hass:
             self.async_schedule_update_ha_state()
+
+    async def turn_off(self) -> None:
+        """Turn off the climate entity."""
+        # Implement the turn off logic here
+        pass
+
+    async def turn_on(self) -> None:
+        """Turn on the climate entity."""
+        # Implement the turn on logic here
+        pass
 
     @property
     def unique_id(self):
